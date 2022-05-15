@@ -5,11 +5,11 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
 dotenv.config();
-const app = express();
-const productRoutes = require('./src/routes/products');
-const userRoutes = require('./src/routes/user');
-const articleRoutes = require('./src/routes/article');
-const path = require('path');
+// const app = express();
+// const productRoutes = require('./src/routes/products');
+// const userRoutes = require('./src/routes/user');
+// const articleRoutes = require('./src/routes/article');
+// const path = require('path');
 
 // set up server
 
@@ -43,9 +43,9 @@ mongoose.connect(
   }
 );
 
-app.use('/v1/customers', productRoutes)
-app.use('/api/users', userRoutes)
-app.use('/api/article', articleRoutes)
+// app.use('/v1/customers', productRoutes)
+// app.use('/api/users', userRoutes)
+// app.use('/api/article', articleRoutes)
 // set up routes
 
 app.use("/auth", require("./routers/userRouter"));
