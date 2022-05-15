@@ -7,7 +7,7 @@ const passport = require('passport');
 const app = express();
 const productRoutes = require('./src/routes/products');
 const userRoutes = require('./src/routes/user');
-const blogRoutes = require('./src/routes/blog');
+const articleRoutes = require('./src/routes/article');
 const path = require('path');
 
 const fileStorage = multer.diskStorage({
@@ -46,7 +46,7 @@ app.use((req, res, next) => {
 
 app.use('/v1/customers', productRoutes)
 app.use('/api/users', userRoutes)
-app.use('/v1/blog', blogRoutes)
+app.use('/api/article', articleRoutes)
 
 app.use((error, req, res, next) => {
   const status = error.statusCode || 500;
