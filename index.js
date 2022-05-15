@@ -1,70 +1,44 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
-const multer = require('multer');
-const passport = require('passport');
+const express = require("express");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
+
+dotenv.config();
+
+// set up server
 
 const app = express();
-const productRoutes = require('./src/routes/products');
-const userRoutes = require('./src/routes/user');
-const blogRoutes = require('./src/routes/blog');
-const path = require('path');
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server started on port: ${PORT}`));
 
-const fileStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'images');
-  },
-  filename: (req, file, cb) => {
-    cb(null, new Date().getTime() + '-' + file.originalname);
-  }
-})
-
-const fileFilter = (req, file, cb) => {
-  if (
-    file.mimetype === 'image/png' ||
-    file.mimetype === 'image/jpg' ||
-    file.mimetype === 'image/jpeg'
-  ) {
-    cb(null, true);
-  } else {
-    cb(null, false);
-  }
-}
-
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use('/images', express.static(path.join(__dirname, 'images')));
-app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single('image'))
-
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-  next();
-})
-
-
-app.use('/v1/customers', productRoutes)
-app.use('/api/users', userRoutes)
-app.use('/v1/blog', blogRoutes)
-
-app.use((error, req, res, next) => {
-  const status = error.statusCode || 500;
-  const message = error.message;
-  const data = error.data;
-
-  res.status(status).json({ message: message, data: data });
-})
-
-const db = require('./src/config/keys').mongoURI;
-
-mongoose.connect(db, { useNewUrlParser: true })
-  .then(() => {
-    app.listen(4000, () => console.log('Server is running on port 4000'));
+app.use(express.json());
+app.use(cookieParser());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      // "https://mern-auth-template-tutorial.netlify.app",
+    ],
+    credentials: true,
   })
-  .catch(err => console.log(err))
+);
 
-// Passport middleware
-app.use(passport.initialize());
-// Passport config
-require("./src/config/passport")(passport);
+// connect to mongoDB
+
+mongoose.connect(
+  process.env.MDB_CONNECT,
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  },
+  (err) => {
+    if (err) return console.error(err);
+    console.log("Connected to MongoDB");
+  }
+);
+
+// set up routes
+
+app.use("/auth", require("./routers/userRouter"));
+// app.use("/customer", require("./routers/customerRouter"));
