@@ -7,6 +7,7 @@ const keys = require("../config/keys");
 // Load input validation
 const validateRegisterInput = require("./validation/register");
 const validateLoginInput = require("./validation/login");
+const validateEditProfile = require("./validation/profile");
 
 // Load User model
 const User = require("../models/user");
@@ -97,4 +98,74 @@ exports.login = (req, res, next) => {
       }
     });
   });
+}
+
+exports.profile = (req, res, next) => {
+  const id = req.params.id
+  User.findById(id)
+    .then(result => {
+      if (!result) {
+        const err = new Error('User not found.')
+        err.statusCode = 404
+        throw err
+      }
+      res.status(200).json({
+        message: 'Get profile user successfully',
+        data: {
+          id: result._id,
+          name: result.name,
+          email: result.email,
+          password: result.password
+        }
+      })
+    })
+    .catch(err => {
+      next(err)
+    })
+}
+
+exports.editProfile = (req, res, next) => {
+  // Form validation
+
+  const { errors, isValid } = validateEditProfile(req.body);
+
+  // Check validation
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+
+  const id = req.params.id
+  const name = req.body.name
+  const password = req.body.password
+
+  User.findById(id)
+    .then(post => {
+      if (!post) {
+        const err = new Error('User not found.')
+        err.statusCode = 404
+        throw err
+      }
+
+      post.name = name
+      post.password = password
+
+      // Hash password before saving in database
+      bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(post.password, salt, (err, hash) => {
+          if (err) throw err;
+          post.password = hash;
+          post.save()
+        });
+      });
+
+    })
+    .then(result => {
+      res.status(200).json({
+        message: 'Update profile successfully',
+        data: { result }
+      })
+    })
+    .catch(err => {
+      next(err)
+    })
 }
