@@ -4,14 +4,13 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 // register
-
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password, passwordVerify } = req.body;
 
     // validation
 
-    if (!email || !password || !passwordVerify)
+    if (!name || !email || !password || !passwordVerify)
       return res
         .status(400)
         .json({ errorMessage: "Please enter all required fields." });
