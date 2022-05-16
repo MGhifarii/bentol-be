@@ -52,10 +52,11 @@ exports.registerUser = async (req, res) => {
     // send the token in HTTP-only cookie
     res
       .cookie("token", token, {
-        httpOnly: true,
+        httpOnly: false,
         secure: true,
         sameSite: "none",
       })
+      .cookie("checkToken", true, { secure: true, sameSite: "noen" })
       .send();
   } catch (err) {
     console.error(err);
@@ -99,7 +100,7 @@ exports.loginUser = async (req, res) => {
 
     res
       .cookie("token", token, {
-        httpOnly: true,
+        httpOnly: false,
         secure: true,
         sameSite: "none",
       })
@@ -168,10 +169,15 @@ exports.saveUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    const updatedUser = await User.updateOne(
+    // const updatedUser = await User.updateOne(
+    //   { _id: req.params.id },
+    //   { $set: req.body }
+    // );
+    const updatedUser = await User.findByIdAndUpdate(
       { _id: req.params.id },
-      { $set: req, body }
+      { $set: req.body }
     );
+
     res.status(200).json(updatedUser);
   } catch (err) {
     res.status(404).send();
