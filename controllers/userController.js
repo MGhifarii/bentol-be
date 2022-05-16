@@ -101,7 +101,7 @@ exports.loginUser = async (req, res) => {
     res
       .cookie("token", token, {
         httpOnly: false,
-        secure: true,
+        secure: false,
         sameSite: "none",
       })
       .send();
@@ -115,9 +115,9 @@ exports.loginUser = async (req, res) => {
 exports.logoutUser = (req, res) => {
   res
     .cookie("token", "", {
-      httpOnly: true,
+      httpOnly: false,
       expires: new Date(0),
-      secure: true,
+      secure: false,
       sameSite: "none",
     })
     .send();
