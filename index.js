@@ -21,7 +21,10 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https:/bentol.netlify.app"],
+    origin: [
+      "http://localhost:3000",
+      // "https://mern-auth-template-tutorial.netlify.app",
+    ],
     credentials: true,
   })
 );
