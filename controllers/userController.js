@@ -52,10 +52,9 @@ exports.registerUser = async (req, res) => {
     // send the token in HTTP-only cookie
     res
       .cookie("token", token, {
-        httpOnly: true,
+        httpOnly: false,
         secure: true,
         sameSite: "none",
-        proxy: true,
       })
       .send();
   } catch (err) {
@@ -100,10 +99,9 @@ exports.loginUser = async (req, res) => {
 
     res
       .cookie("token", token, {
-        httpOnly: true,
+        httpOnly: false,
         secure: true,
         sameSite: "none",
-        proxy: true,
       })
       .send();
   } catch (err) {
@@ -116,11 +114,10 @@ exports.loginUser = async (req, res) => {
 exports.logoutUser = (req, res) => {
   res
     .cookie("token", "", {
-      httpOnly: true,
+      httpOnly: false,
       expires: new Date(0),
       secure: true,
-      // sameSite: "none",
-      proxy: true,
+      sameSite: "none",
     })
     .send();
 };

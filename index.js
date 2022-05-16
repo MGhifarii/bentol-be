@@ -21,10 +21,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      // "https://mern-auth-template-tutorial.netlify.app",
-    ],
+    origin: ["http://localhost:3000"],
     credentials: true,
   })
 );
@@ -43,10 +40,6 @@ mongoose.connect(
   }
 );
 
-// app.use('/v1/customers', productRoutes)
-// app.use('/api/users', userRoutes)
-// app.use('/api/article', articleRoutes)
 // set up routes
 
 app.use("/user", require("./routers/userRouter.js"));
-// app.use("/customer", require("./routers/customerRouter"));
