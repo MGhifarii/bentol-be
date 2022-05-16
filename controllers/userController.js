@@ -53,11 +53,11 @@ exports.registerUser = async (req, res) => {
     res
       .cookie("token", token, {
         httpOnly: false,
-        secure: true,
+        secure: false,
         sameSite: "none",
         proxy: true,
       })
-      .cookie("checkToken", true, { secure: true, sameSite: "noen" })
+      .cookie("checkToken", true, { secure: false, sameSite: "noen" })
       .send();
   } catch (err) {
     console.error(err);
@@ -102,7 +102,7 @@ exports.loginUser = async (req, res) => {
     res
       .cookie("token", token, {
         httpOnly: false,
-        secure: true,
+        secure: false,
         sameSite: "none",
         proxy: true,
       })
@@ -119,7 +119,7 @@ exports.logoutUser = (req, res) => {
     .cookie("token", "", {
       httpOnly: false,
       expires: new Date(0),
-      secure: true,
+      secure: false,
       sameSite: "none",
       proxy: true,
     })
