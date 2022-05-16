@@ -52,14 +52,10 @@ exports.registerUser = async (req, res) => {
     // send the token in HTTP-only cookie
     res
       .cookie("token", token, {
-        httpOnly: false,
-        secure: false,
-        // sameSite: "none",
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
         proxy: true,
-      })
-      .cookie("checkToken", true, {
-        secure: false,
-        // sameSite: "none",
       })
       .send();
   } catch (err) {
@@ -104,9 +100,9 @@ exports.loginUser = async (req, res) => {
 
     res
       .cookie("token", token, {
-        httpOnly: false,
-        secure: false,
-        // sameSite: "none",
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
         proxy: true,
       })
       .send();
@@ -120,9 +116,9 @@ exports.loginUser = async (req, res) => {
 exports.logoutUser = (req, res) => {
   res
     .cookie("token", "", {
-      httpOnly: false,
+      httpOnly: true,
       expires: new Date(0),
-      secure: false,
+      secure: true,
       // sameSite: "none",
       proxy: true,
     })
