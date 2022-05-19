@@ -7,9 +7,10 @@ const { auth } = require("../middleware/authMiddleware.js");
 
 const router = express.Router();
 
-router.post("/register", userController.registerUser);
+router.post("/", userController.registerUser);
 router.post("/login", userController.loginUser);
 router.get("/me", auth, userController.getMe);
+router.put("/me", auth, userController.editProfile);
 // TODO: fix user PUT and DELETE
 // router.put("/:id", auth, userController.updateUser);
 // router.delete("/:id", auth, userController.deleteUser);

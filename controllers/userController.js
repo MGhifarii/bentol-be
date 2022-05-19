@@ -1,15 +1,16 @@
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+const generateToken = require("../utils/generateToken.js");
 const asyncHandler = require("express-async-handler");
 
 // import models
 const User = require("../models/userModel.js");
+const Vehicle = require("../models/vehicleModel.js");
 
 // @desc    Register new user
-// @route   POST /api/users
+// @route   POST /api/v1/users
 // @access  Public
 exports.registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, vehicle } = req.body;
 
   if (!name || !email || !password) {
     res.status(400);
@@ -33,6 +34,7 @@ exports.registerUser = asyncHandler(async (req, res) => {
     name,
     email,
     password: hashedPassword,
+    vehicle,
   });
 
   if (user) {
@@ -40,6 +42,7 @@ exports.registerUser = asyncHandler(async (req, res) => {
       _id: user.id,
       name: user.name,
       email: user.email,
+      vehicle: user.vehicle,
       token: generateToken(user._id),
     });
   } else {
@@ -49,19 +52,23 @@ exports.registerUser = asyncHandler(async (req, res) => {
 });
 
 // @desc    Authenticate a user
-// @route   POST /api/users/login
+// @route   POST /api/v1/users/login
 // @access  Public
 exports.loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   // Check for user email
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).populate(
+    "vehicle",
+    "_id name brand"
+  );
 
   if (user && (await bcrypt.compare(password, user.password))) {
     res.json({
       _id: user.id,
       name: user.name,
       email: user.email,
+      vehicle: user.vehicle,
       token: generateToken(user._id),
     });
   } else {
@@ -71,52 +78,77 @@ exports.loginUser = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get user data
-// @route   GET /api/users/me
+// @route   GET /api/v1/users/me
 // @access  Private
 exports.getMe = asyncHandler(async (req, res) => {
   res.status(200).json(req.user);
 });
 
-// @desc    Edit user data
-// @route   PUT /api/users/:id
+// @desc    Get user data
+// @route   PUT /api/v1/users/me
 // @access  Private
-exports.updateUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
+exports.editProfile = asyncHandler(async (req, res) => {
+  // if (!req.user) {
+  //   res.status(400);
+  //   throw new Error("User not found");
+  // }
+  const user = await User.findById(req.user._id).populate(
+    "vehicle",
+    "_id name brand"
+  );
 
-  if (!user) {
-    res.status(400);
-    throw new Error("User not found");
+  if (user) {
+    user.name = req.body.name || user.name;
+    user.email = req.body.email || user.email;
+    user.vehicle = req.body.vehicle || user.vehicle;
+
+    const updatedUser = await user.save();
+    res.json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      vehicle: updatedUser.vehicle,
+      token: generateToken(updatedUser._id),
+    });
+  } else {
+    res.status(404);
+    throw new Error("User not found!");
   }
-
-  const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-  });
-
-  res.status(200).json(updatedUser);
 });
 
-// @desc    Delete user
-// @route   DELETE /api/users/:id
-// @access  Private
-exports.deleteUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
+// // @desc    Edit user data
+// // @route   PUT /api/v1/users/:id
+// // @access  Public
+// exports.updateUser = asyncHandler(async (req, res) => {
+//   const user = await User.findById(req.params.id);
 
-  if (!user) {
-    res.status(400);
-    throw new Error("User not found");
-  }
+//   if (!user) {
+//     res.status(400);
+//     throw new Error("User not found");
+//   }
 
-  await user.remove();
+//   const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
+//     new: true,
+//   });
 
-  res.status(200).json({ id: req.params.id });
-});
+//   res.status(200).json(updatedUser);
+// });
 
-// Generate JWT
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: "30d",
-  });
-};
+// // @desc    Delete user
+// // @route   DELETE /api/v1/users/:id
+// // @access  Public
+// exports.deleteUser = asyncHandler(async (req, res) => {
+//   const user = await User.findById(req.params.id);
+
+//   if (!user) {
+//     res.status(400);
+//     throw new Error("User not found");
+//   }
+
+//   await user.remove();
+
+//   res.status(200).json({ id: req.params.id });
+// });
 
 // OLD ##############################################
 

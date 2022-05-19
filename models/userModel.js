@@ -12,13 +12,17 @@ const UserSchema = new Schema(
       type: String,
       required: [true, "Please add an email"],
     },
-    passwordHash: {
+    password: {
       type: String,
       required: [true, "Please add a password"],
+    },
+    vehicle: {
+      type: Schema.Types.ObjectId,
+      ref: "Vehicle",
     },
   },
   {
     timestamps: true,
   }
 );
-module.exports = User = mongoose.model("users", UserSchema);
+module.exports = User = mongoose.model("User", UserSchema);
