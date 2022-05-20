@@ -18,7 +18,7 @@ app.listen(PORT, () => console.log(`Server started on port: ${PORT}`));
 // CORS
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:3000", "https://bentol.netlify.app"],
     credentials: true,
   })
 );
