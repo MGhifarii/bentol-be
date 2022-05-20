@@ -1,24 +1,21 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const { errorHandler } = require("./middleware/errorMiddleware.js");
+
+const PORT = process.env.PORT || 5000;
 
 dotenv.config();
-// const app = express();
-// const productRoutes = require('./src/routes/products');
-// const userRoutes = require('./src/routes/user');
-// const articleRoutes = require('./src/routes/article');
-// const path = require('path');
 
-// set up server
-
+// set up express
 const app = express();
-const PORT = process.env.PORT || 5000;
+app.use(express.json());
+
+// port listener
 app.listen(PORT, () => console.log(`Server started on port: ${PORT}`));
 
-app.use(express.json());
-app.use(cookieParser());
+// CORS
 app.use(
   cors({
     origin: ["http://localhost:3000"],
@@ -26,8 +23,9 @@ app.use(
   })
 );
 
-// connect to mongoDB
+app.use(errorHandler);
 
+// connect to mongoDB
 mongoose.connect(
   process.env.MDB_CONNECT,
   {
@@ -36,10 +34,11 @@ mongoose.connect(
   },
   (err) => {
     if (err) return console.error(err);
-    console.log("Connected to MongoDB");
+    console.log(`MongoDB connected: `);
   }
 );
 
 // set up routes
-
-app.use("/user", require("./routers/userRouter.js"));
+app.use("/api/v1/users", require("./routers/userRouter.js"));
+app.use("/api/v1/vehicles", require("./routers/vehicleRouter.js"));
+app.use("/api/v1/gas", require("./routers/gasRouter.js"));
