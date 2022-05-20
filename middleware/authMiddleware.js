@@ -21,7 +21,7 @@ const auth = asyncHandler(async (req, res, next) => {
       // Get user from the token
       req.user = await User.findById(decoded.id)
         .select("-password")
-        .populate("vehicle", "_id name brand");
+        .populate("vehicle", "_id name brand kmpl");
 
       next();
     } catch (error) {

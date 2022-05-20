@@ -18,7 +18,10 @@ exports.registerUser = asyncHandler(async (req, res) => {
   }
 
   // Check if user exists
-  const userExists = await User.findOne({ email });
+  const userExists = await User.findOne({ email }).populate(
+    "vehicle",
+    "_id name brand kmpl"
+  );
 
   if (userExists) {
     res.status(400);
@@ -60,7 +63,7 @@ exports.loginUser = asyncHandler(async (req, res) => {
   // Check for user email
   const user = await User.findOne({ email }).populate(
     "vehicle",
-    "_id name brand"
+    "_id name brand kmpl"
   );
 
   if (user && (await bcrypt.compare(password, user.password))) {
@@ -94,7 +97,7 @@ exports.editProfile = asyncHandler(async (req, res) => {
   // }
   const user = await User.findById(req.user._id).populate(
     "vehicle",
-    "_id name brand"
+    "_id name brand kmpl"
   );
 
   if (user) {
@@ -107,7 +110,7 @@ exports.editProfile = asyncHandler(async (req, res) => {
       _id: updatedUser._id,
       name: updatedUser.name,
       email: updatedUser.email,
-      vehicle: updatedUser.vehicle,
+      vehicle: updatedUser.vehicle._id,
       token: generateToken(updatedUser._id),
     });
   } else {
