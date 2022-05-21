@@ -10,6 +10,7 @@ const router = express.Router();
 router.post("/", userController.registerUser);
 router.post("/login", userController.loginUser);
 router.get("/me", auth, userController.getMe);
+// router.get("/me", userController.getProfile);
 router.put("/me", auth, userController.editProfile);
 
 module.exports = router;

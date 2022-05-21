@@ -1,10 +1,11 @@
 const bcrypt = require("bcryptjs");
 const generateToken = require("../utils/generateToken.js");
 const asyncHandler = require("express-async-handler");
-
+const mongoose = require("mongoose");
 // import models
 const User = require("../models/userModel.js");
 const Vehicle = require("../models/vehicleModel.js");
+const { update } = require("../models/userModel.js");
 
 // @desc    Register new user
 // @route   POST /api/v1/users
@@ -87,30 +88,66 @@ exports.getMe = asyncHandler(async (req, res) => {
   res.status(200).json(req.user);
 });
 
+// // @desc    Get profile
+// // @route   GET /api/v1/users/me
+// // @access  Private
+// exports.getProfile = asyncHandler(async (req, res) => {
+//   const user = await User.findById(req.user._id).populate(
+//     "vehicle",
+//     "_id name brand kmpl"
+//   );
+
+//   if (user) {
+//     res.json({
+//       _id: user.id,
+//       name: user.name,
+//       email: user.email,
+//       vehicle: user.vehicle,
+//       token: generateToken(user._id),
+//     });
+//   } else {
+//     res.status(400);
+//     throw new Error("Invalid credentials");
+//   }
+// });
+
 // @desc    Get user data
 // @route   PUT /api/v1/users/me
 // @access  Private
 exports.editProfile = asyncHandler(async (req, res) => {
-  // if (!req.user) {
-  //   res.status(400);
-  //   throw new Error("User not found");
-  // }
   const user = await User.findById(req.user._id).populate(
     "vehicle",
     "_id name brand kmpl"
   );
-
+  // const { name, email, vehicle } = req.body;
+  // if (!user) {
+  //   res.status(404);
+  //   throw new Error("User not found!");
+  // }
+  // const updatedUser = await User.findByIdAndUpdate(req.user._id, req.body, {
+  //   new: true,
+  // });
+  // res.status(200).json({
+  //   _id: updatedUser.id,
+  //   name: updatedUser.name,
+  //   email: updatedUser.email,
+  //   vehicle: updatedUser.vehicle,
+  //   token: generateToken(updatedUser._id),
+  // });
   if (user) {
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
     user.vehicle = req.body.vehicle || user.vehicle;
-
-    const updatedUser = await user.save();
+    await user.save();
+    const updatedUser = await User.findById(req.user._id).populate(
+      "vehicle",
+      "_id name brand kmpl"
+    );
     res.json({
       _id: updatedUser._id,
       name: updatedUser.name,
       email: updatedUser.email,
-      vehicle: updatedUser.vehicle._id,
+      vehicle: updatedUser.vehicle,
       token: generateToken(updatedUser._id),
     });
   } else {
