@@ -2,9 +2,9 @@ const jwt = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
 
 // import models
-const User = require("../models/adminModel.js");
+const Admin = require("../../models/adminModel");
 
-const auth = asyncHandler(async (req, res, next) => {
+const adminAuth = asyncHandler(async (req, res, next) => {
   let token;
 
   if (
@@ -19,9 +19,7 @@ const auth = asyncHandler(async (req, res, next) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
       // Get user from the token
-      req.user = await User.findById(decoded.id)
-        .select("-password")
-        .populate("vehicle", "_id name brand kmpl");
+      req.user = await Admin.findById(decoded.id).select("-password");
 
       next();
     } catch (error) {
@@ -37,19 +35,4 @@ const auth = asyncHandler(async (req, res, next) => {
   }
 });
 
-// function auth(req, res, next) {
-//   try {
-//     const token = req.cookies.token;
-//     if (!token) return res.status(401).json({ errorMessage: "Unauthorized" });
-
-//     const verified = jwt.verify(token, process.env.JWT_SECRET);
-//     req.user = verified.user;
-
-//     next();
-//   } catch (err) {
-//     console.error(err);
-//     res.status(401).json({ errorMessage: "Unauthorized" });
-//   }
-// }
-
-module.exports = { auth };
+module.exports = { adminAuth };
