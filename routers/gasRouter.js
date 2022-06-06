@@ -1,6 +1,6 @@
 const express = require("express");
 const gasController = require("../controllers/gasController.js");
-const { adminAuth } = require("../middleware/admin/adminAuthMiddleware.js");
+const { adminAuth } = require("../middleware/admin/adminAuthMiddleware");
 
 const router = express.Router();
 
