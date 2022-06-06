@@ -42,3 +42,4 @@ mongoose.connect(
 app.use("/api/v1/users", require("./routers/userRouter.js"));
 app.use("/api/v1/vehicles", require("./routers/vehicleRouter.js"));
 app.use("/api/v1/gas", require("./routers/gasRouter.js"));
+app.use("/api/v1/admins", require("./routers/adminRouter.js"));

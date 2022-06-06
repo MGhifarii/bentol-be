@@ -11,6 +11,15 @@ exports.getVehicles = asyncHandler(async (req, res) => {
   res.status(200).json(vehicles);
 });
 
+// @desc    Get vehicle by id
+// @route   GET /api/v1/vehicles/:id
+// @acces   Public
+exports.getVehicleById = asyncHandler(async (req, res) => {
+  const vehicle = await Vehicle.findById(req.params.id);
+
+  res.status(200).json(vehicle);
+});
+
 // @desc    Set vehicle
 // @route   POST /api/v1/vehicles
 // @access  Public

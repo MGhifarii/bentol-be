@@ -10,6 +10,15 @@ exports.getGas = asyncHandler(async (req, res) => {
   res.status(200).json(gas);
 });
 
+// @desc    Get gas
+// @route   GET /api/v1/gas/:id
+// @acces   Public
+exports.getGasById = asyncHandler(async (req, res) => {
+  const gas = await Gas.findById(req.params.id);
+
+  res.status(200).json(gas);
+});
+
 // @desc    Set gas
 // @route   POST /api/v1/gas
 // @access  Public

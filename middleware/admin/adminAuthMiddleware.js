@@ -2,9 +2,9 @@ const jwt = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
 
 // import models
-const User = require("../models/adminModel.js");
+const Admin = require("../../models/adminModel");
 
-const auth = asyncHandler(async (req, res, next) => {
+const adminAuth = asyncHandler(async (req, res, next) => {
   let token;
 
   if (
@@ -19,9 +19,7 @@ const auth = asyncHandler(async (req, res, next) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
       // Get user from the token
-      req.user = await User.findById(decoded.id)
-        .select("-password")
-        .populate("vehicle", "_id name brand kmpl");
+      req.user = await Admin.findById(decoded.id).select("-password");
 
       next();
     } catch (error) {
@@ -37,4 +35,4 @@ const auth = asyncHandler(async (req, res, next) => {
   }
 });
 
-module.exports = { auth };
+module.exports = { adminAuth };
