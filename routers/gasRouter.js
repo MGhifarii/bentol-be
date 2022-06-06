@@ -1,5 +1,6 @@
 const express = require("express");
 const gasController = require("../controllers/gasController.js");
+const { adminAuth } = require("../middleware/admin/adminAuthMiddleware.js");
 
 const router = express.Router();
 
@@ -10,8 +11,9 @@ const router = express.Router();
 // router.delete("/gas/:id", gasController.deleteGas);
 
 router.get("/", gasController.getGas);
-router.post("/", gasController.setGas);
-router.put("/:id", gasController.updateGas);
-router.delete("/:id", gasController.deleteGas);
+router.get("/:id", gasController.getGasById);
+router.post("/", adminAuth, gasController.setGas);
+router.put("/:id", adminAuth, gasController.updateGas);
+router.delete("/:id", adminAuth, gasController.deleteGas);
 
 module.exports = router;
